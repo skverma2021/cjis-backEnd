@@ -170,5 +170,22 @@ router.get('/:id', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+router.get('/:theEMailId/:thePass', async (req, res) => {
+  try {
+    const { theEMailId, thePass } = req.params;
+    const pool = await sql.connect(config);
+    const result = await pool
+      .request()
+      .input('theEMailId', sql.VarChar(150), theEMailId)
+      .input('thePass', sql.VarChar(150), thePass)
+      .query(
+        'SELECT * FROM emp where eMailId = @theEMailId and passwd = @thePass'
+      );
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error fetching employees:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 module.exports = router;

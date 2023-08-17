@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
     const result = await pool
       .request()
       .query(
-        'SELECT job.id, job.description, job.clientId, client.shortName, CONVERT(VARCHAR(10), job.ordDateStart, 111) as theStart, CONVERT(VARCHAR(10), job.ordDateEnd, 111) as theEnd, job.ordValue FROM job INNER JOIN client ON job.clientId = client.id'
+        'SELECT job.id, job.id as id1, job.id as id2, job.id as id3,  job.description, job.clientId, client.shortName, CONVERT(VARCHAR(10), job.ordDateStart, 111) as theStart, CONVERT(VARCHAR(10), job.ordDateEnd, 111) as theEnd, job.ordValue FROM job INNER JOIN client ON job.clientId = client.id'
       );
     res.json(result.recordset);
   } catch (err) {
