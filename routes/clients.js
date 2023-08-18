@@ -25,6 +25,23 @@ router.get('/', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+router.get('/:short', async (req, res) => {
+  try {
+    const { mode } = req.params;
+    // if (mode !== 'short') {
+    //   res.json([]);
+    //   // return;
+    // }
+    const pool = await sql.connect(config);
+    const result = await pool
+      .request()
+      .query('SELECT client.id, client.shortName FROM client');
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error fetching clients:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 // POST route to insert city data
 router.post('/', async (req, res) => {

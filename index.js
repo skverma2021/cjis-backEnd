@@ -65,6 +65,7 @@ app.use('/api/designation', designation);
 app.use('/api/department', department);
 app.use('/api/cities', cities);
 app.use('/api/clients', clients);
+app.use('/api/clients/short', clients);
 app.use('/api/jobs', jobs);
 app.use('/api/ExStages', ExStages);
 app.use('/api/WorkPlans', WorkPlans);
