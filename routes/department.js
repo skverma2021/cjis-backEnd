@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
     const pool = await sql.connect(config);
     const result = await pool
       .request()
-      .query('SELECT id,name, location FROM deptt order by name');
+      .query('SELECT id,name, location FROM deptt order by id');
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching department:', err);
