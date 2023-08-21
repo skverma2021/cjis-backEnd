@@ -62,6 +62,7 @@ app.get('/', (req, res) => {
 app.use('/api/emps', emps);
 app.use('/api/discipline', discipline);
 app.use('/api/designation', designation);
+app.use('/api/designation/short', designation);
 app.use('/api/department', department);
 app.use('/api/cities', cities);
 app.use('/api/clients', clients);

@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
     const result = await pool
       .request()
       .query(
-        'SELECT emp.id, emp.id as id1,emp.id as id2, emp.empFullName, CONVERT(VARCHAR(10), emp.dob, 111) as theDob, day(emp.dob) as theDay,month(emp.dob) as theMonth,year(emp.dob) as theYear, emp.addLine1, emp.mobile, emp.eMailId, cities.cityName AS theCity, deptt.name AS theDeptt, designation.description AS theDesig FROM     emp INNER JOIN cities ON emp.cityId = cities.id INNER JOIN deptt ON emp.curDeptt = deptt.id INNER JOIN designation ON emp.curDesig = designation.id'
+        'SELECT emp.id, emp.id as id1, emp.id as id2, emp.id as id3, emp.empFullName, CONVERT(VARCHAR(10), emp.dob, 111) as theDob, day(emp.dob) as theDay,month(emp.dob) as theMonth,year(emp.dob) as theYear, emp.addLine1, emp.mobile, emp.eMailId, cities.cityName AS theCity, deptt.name AS theDeptt, designation.description AS theDesig FROM     emp INNER JOIN cities ON emp.cityId = cities.id INNER JOIN deptt ON emp.curDeptt = deptt.id INNER JOIN designation ON emp.curDesig = designation.id'
       );
     res.json(result.recordset);
   } catch (err) {
