@@ -41,6 +41,42 @@ router.get('/:short', async (req, res) => {
   }
 });
 
+const checkTrailParameter = (req, res, next) => {
+  const validTrailValue = 'trail'; // The valid value for 'trail'
+  const userTrailValue = req.params.trail; // The value provided by the user
+
+  if (userTrailValue !== validTrailValue) {
+    return res.json([]); // Return an empty array if 'trail' is not the expected value
+  }
+
+  next(); // Proceed to the route handler if the 'trail' value is correct
+};
+
+router.get('/:empId/:trail', checkTrailParameter, async (req, res) => {
+  const { empId, trail } = req.params;
+  // if (trail !== 'trail') empId = 1;
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool
+      .request()
+      .input('empId', sql.Int, empId)
+      .input('trail', sql.VarChar(5), trail)
+      .query(
+        `SELECT empDesig.id AS theId,empDesig.empId AS theEmpId, discipline.description AS theDiscp, grade.description AS theGrade, grade.hourlyRate AS theHourlyRate, designation.description AS theDesig, CONVERT(VARCHAR(10), empDesig.fromDt, 111) as theFromDt
+        FROM     empDesig INNER JOIN
+                          designation ON empDesig.desigId = designation.id INNER JOIN
+                          discipline ON designation.discpId = discipline.id INNER JOIN
+                          grade ON designation.gradeId = grade.id
+        WHERE  (empDesig.empId = @empId)
+        ORDER BY theFromDt DESC`
+      );
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error fetching employee designations:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 // POST route to insert employee data
 router.post('/:posting', async (req, res) => {
   try {
