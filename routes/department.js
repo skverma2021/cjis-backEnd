@@ -39,6 +39,39 @@ router.get('/:short', async (req, res) => {
   }
 });
 
+const checkTrailParameter = (req, res, next) => {
+  const validTrailValue = 'trail'; // The valid value for 'trail'
+  const userTrailValue = req.params.trail; // The value provided by the user
+
+  if (userTrailValue !== validTrailValue) {
+    return res.json([]); // Return an empty array if 'trail' is not the expected value
+  }
+
+  next(); // Proceed to the route handler if the 'trail' value is correct
+};
+
+router.get('/:empId/:trail', checkTrailParameter, async (req, res) => {
+  const { empId, trail } = req.params;
+  // if (trail !== 'trail') empId = 1;
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool
+      .request()
+      .input('empId', sql.Int, empId)
+      .input('trail', sql.VarChar(5), trail)
+      .query(
+        `SELECT empDeptt.id AS theId,empDeptt.empId AS theEmpId, deptt.name AS theDeptt, CONVERT(VARCHAR(10), empDeptt.fromDt, 111) AS theFromDt
+        FROM     empDeptt INNER JOIN
+                          deptt ON empDeptt.depttId = deptt.id
+        WHERE  (empDeptt.empId = @empId)
+        ORDER BY theFromDt DESC`
+      );
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error fetching employee transfers:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
 router.post('/:transfer', async (req, res) => {
   try {
     // const { error } = validate(req.body);
