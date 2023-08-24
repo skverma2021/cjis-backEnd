@@ -62,7 +62,7 @@ router.get('/:empId/:trail', checkTrailParameter, async (req, res) => {
       .input('empId', sql.Int, empId)
       .input('trail', sql.VarChar(5), trail)
       .query(
-        `SELECT empDesig.id AS theId,empDesig.empId AS theEmpId, discipline.description AS theDiscp, grade.description AS theGrade, grade.hourlyRate AS theHourlyRate, designation.description AS theDesig, CONVERT(VARCHAR(10), empDesig.fromDt, 111) as theFromDt
+        `SELECT empDesig.id AS theId,designation.id as theDesigId,empDesig.empId AS theEmpId, discipline.description AS theDiscp, grade.description AS theGrade, grade.hourlyRate AS theHourlyRate, designation.description AS theDesig, CONVERT(VARCHAR(10), empDesig.fromDt, 111) as theFromDt
         FROM     empDesig INNER JOIN
                           designation ON empDesig.desigId = designation.id INNER JOIN
                           discipline ON designation.discpId = discipline.id INNER JOIN
@@ -105,6 +105,67 @@ router.post('/:posting', async (req, res) => {
       .send(`empDesig data inserted successfully ${JSON.stringify(req.body)}`);
   } catch (err) {
     console.error('Error inserting empDesig data:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+const checkEmpDesigParameter = (req, res, next) => {
+  const validEmpDesigValue = 'empDesig'; // The valid value for 'trail'
+  const userEmpDesigValue = req.params.empDesig; // The value provided by the user
+
+  if (userEmpDesigValue !== validEmpDesigValue) {
+    return res.json([]); // Return an empty array if 'trail' is not the expected value
+  }
+
+  next(); // Proceed to the route handler if the 'trail' value is correct
+};
+router.delete('/:id/:empDesig', checkEmpDesigParameter, async (req, res) => {
+  // console.log('Hi');
+  try {
+    const { id } = req.params;
+
+    // Create a SQL Server connection pool
+    const pool = await sql.connect(config);
+
+    // Delete the record from the Client table
+    await pool
+      .request()
+      .input('id', sql.Int, id)
+      .query('DELETE FROM empDesig WHERE id = @id');
+
+    res.send('Record deleted successfully');
+  } catch (err) {
+    console.error('Error deleting record:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// update empDesig
+router.put('/:id/:empDesig', checkEmpDesigParameter, async (req, res) => {
+  try {
+    // const { error } = validate(req.body);
+    // if (error)
+    //   return res.status(400).send(`Invalid input: ${error.details[0].message}`);
+    const { id } = req.params;
+    const { empId, desigId, fromDt } = req.body;
+    console.log(empId, desigId, fromDt);
+    // Create a SQL Server connection pool
+    const pool = await sql.connect(config);
+    await pool
+      .request()
+      .input('id', sql.Int, id)
+      .input('empId', sql.Int, empId)
+      .input('desigId', sql.Int, desigId)
+      .input('fromDt', sql.Date, fromDt)
+      .query(
+        'UPDATE empDesig SET empId = @empId, desigId = @desigId, fromDt = @fromDt WHERE id = @id'
+      );
+
+    res
+      .status(201)
+      .send(`empDesig data updated successfully ${JSON.stringify(req.body)}`);
+  } catch (err) {
+    console.error('Error updating empDesig data:', err);
     res.status(500).send('Internal Server Error');
   }
 });
