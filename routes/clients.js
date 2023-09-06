@@ -14,28 +14,7 @@ const config = {
 router.get('/', async (req, res) => {
   try {
     const pool = await sql.connect(config);
-    const result = await pool
-      .request()
-      .query(
-        'SELECT client.id, client.shortName, client.longName, client.website, client.contactName, client.contactEMail, client.contactMobile, client.addLine1, client.street, client.cityId, cities.cityName FROM client INNER JOIN cities ON client.cityId = cities.id'
-      );
-    res.json(result.recordset);
-  } catch (err) {
-    console.error('Error fetching clients:', err);
-    res.status(500).send('Internal Server Error');
-  }
-});
-router.get('/:short', async (req, res) => {
-  try {
-    const { mode } = req.params;
-    // if (mode !== 'short') {
-    //   res.json([]);
-    //   // return;
-    // }
-    const pool = await sql.connect(config);
-    const result = await pool
-      .request()
-      .query('SELECT client.id, client.shortName FROM client');
+    const result = await pool.request().execute('getClients');
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching clients:', err);
@@ -75,9 +54,7 @@ router.post('/', async (req, res) => {
       .input('addLine1', sql.VarChar(100), addLine1)
       .input('street', sql.VarChar(50), street)
       .input('cityId', sql.Int, cityId)
-      .query(
-        'INSERT INTO client (shortName, longName, website, contactName, contactEMail, contactMobile, addLine1, street, cityId) VALUES (@shortName, @longName, @website, @contactName, @contactEMail, @contactMobile, @addLine1, @street, @cityId)'
-      );
+      .execute('postClient');
 
     // res;
     res
@@ -88,6 +65,10 @@ router.post('/', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+// .query(
+//   'postClient @shortName, @longName, @website, @contactName, @contactEMail, @contactMobile, @addLine1, @street, @cityId'
+// );
+
 // POST route to insert city data
 router.put('/:id', async (req, res) => {
   try {
@@ -121,9 +102,7 @@ router.put('/:id', async (req, res) => {
       .input('addLine1', sql.VarChar(100), addLine1)
       .input('street', sql.VarChar(50), street)
       .input('cityId', sql.Int, cityId)
-      .query(
-        'UPDATE client SET shortName = @shortName, longName = @longName, website = @website, contactName = @contactName, contactEMail = @contactEMail, contactMobile = @contactMobile, addLine1 = @addLine1, street = @street, cityId = @cityId  WHERE id = @id'
-      );
+      .execute('putClient');
 
     res
       .status(201)
@@ -158,6 +137,7 @@ router.delete('/:id', async (req, res) => {
 
 // GET one Client
 router.get('/:id', async (req, res) => {
+  // console.log('Here');
   try {
     const { id } = req.params;
     const pool = await sql.connect(config);

@@ -14,11 +14,7 @@ const config = {
 router.get('/', async (req, res) => {
   try {
     const pool = await sql.connect(config);
-    const result = await pool
-      .request()
-      .query(
-        'SELECT job.id, job.id as id1, job.id as id2, job.id as id3,  job.description, job.clientId, client.shortName, CONVERT(VARCHAR(10), job.ordDateStart, 111) as theStart, CONVERT(VARCHAR(10), job.ordDateEnd, 111) as theEnd, job.ordValue FROM job INNER JOIN client ON job.clientId = client.id'
-      );
+    const result = await pool.request().execute('getAllJobs');
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching jobs:', err);
@@ -46,9 +42,7 @@ router.post('/', async (req, res) => {
       .input('ordDateStart', sql.Date, ordDateStart)
       .input('ordDateEnd', sql.Date, ordDateEnd)
       .input('ordValue', sql.Money, ordValue)
-      .query(
-        'INSERT INTO job (description, clientId,ordDateStart,ordDateEnd,ordValue) VALUES (@description, @clientId, @ordDateStart, @ordDateEnd, @ordValue)'
-      );
+      .execute('postJob');
     res
       .status(201)
       .send(`Job data inserted successfully ${JSON.stringify(req.body)}`);
@@ -78,9 +72,7 @@ router.put('/:id', async (req, res) => {
       .input('ordDateStart', sql.Date, ordDateStart)
       .input('ordDateEnd', sql.Date, ordDateEnd)
       .input('ordValue', sql.Money, ordValue)
-      .query(
-        'UPDATE job SET description = @description, clientId = @clientId, ordDateStart = @ordDateStart, ordDateEnd = @ordDateEnd, ordValue = @ordValue  WHERE id = @id'
-      );
+      .execute('putJob');
 
     res
       .status(201)

@@ -14,11 +14,7 @@ const config = {
 router.get('/', async (req, res) => {
   try {
     const pool = await sql.connect(config);
-    const result = await pool
-      .request()
-      .query(
-        'SELECT emp.id, emp.id as id1, emp.id as id2, emp.id as id3, emp.empFullName, CONVERT(VARCHAR(10), emp.dob, 111) as theDob, day(emp.dob) as theDay,month(emp.dob) as theMonth,year(emp.dob) as theYear, emp.addLine1, emp.mobile, emp.eMailId, cities.cityName AS theCity, deptt.name AS theDeptt, designation.description AS theDesig FROM     emp INNER JOIN cities ON emp.cityId = cities.id INNER JOIN deptt ON emp.curDeptt = deptt.id INNER JOIN designation ON emp.curDesig = designation.id'
-      );
+    const result = await pool.request().query('getEmps');
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching employees:', err);
@@ -68,7 +64,7 @@ router.post('/', async (req, res) => {
       .input('passwd', sql.VarChar(150), passwd)
 
       .query(
-        'INSERT INTO emp (uId,fName,mName,sName,title,dob,gender,addLine1,cityId,mobile,eMailId,passwd) VALUES (@uId,@fName,@mName,@sName,@title,@dob,@gender,@addLine1,@cityId,@mobile,@eMailId,@passwd)'
+        'postEmp @uId,@fName,@mName,@sName,@title,@dob,@gender,@addLine1,@cityId,@mobile,@eMailId,@passwd'
       );
 
     // res;

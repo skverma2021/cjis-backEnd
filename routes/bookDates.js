@@ -39,17 +39,13 @@ const config = {
 
 router.get('/:m/:y', async (req, res) => {
   try {
-    const { id, m, y } = req.params;
+    const { m, y } = req.params;
     const pool = await sql.connect(config);
     const result = await pool
       .request()
-      .input('id', sql.Int, id)
       .input('m', sql.Int, m)
-      .input('y', sql.Int, y).query(`
-          SELECT id, CONVERT(VARCHAR(10), theDay, 111) as theDay, theWeekDay
-          FROM     allDays
-          WHERE  (month(theDay) = @m) and (year(theDay) = @y)
-      `);
+      .input('y', sql.Int, y)
+      .execute('getBookingDates');
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching bookHeads:', err);

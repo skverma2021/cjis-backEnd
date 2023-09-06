@@ -8,6 +8,8 @@ const designation = require('./routes/designation');
 const department = require('./routes/department');
 const cities = require('./routes/cities');
 const clients = require('./routes/clients');
+const clientsShort = require('./routes/clientsShort');
+
 const jobs = require('./routes/jobs');
 const ExStages = require('./routes/ExStages');
 const WorkPlans = require('./routes/WorkPlans');
@@ -66,7 +68,7 @@ app.use('/api/designation/short', designation);
 app.use('/api/department', department);
 app.use('/api/cities', cities);
 app.use('/api/clients', clients);
-app.use('/api/clients/short', clients);
+app.use('/api/clientsShort', clientsShort);
 app.use('/api/jobs', jobs);
 app.use('/api/ExStages', ExStages);
 app.use('/api/WorkPlans', WorkPlans);

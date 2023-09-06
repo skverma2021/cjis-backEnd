@@ -9,22 +9,16 @@ const config = {
   password: 'theApiUser',
   trustServerCertificate: true,
 };
-// const { jobId } = req.params;
-//     const pool = await sql.connect(config);
-//     const result = await pool
-//       .request()
-//       .input('jobId', sql.Int, jobId)
-router.get('/:jobId', async (req, res) => {
+
+router.get('/', async (req, res) => {
+  // console.log('here in short');
   try {
-    const { jobId } = req.params;
+    const { mode } = req.params;
     const pool = await sql.connect(config);
-    const result = await pool
-      .request()
-      .input('jobId', sql.Int, jobId)
-      .execute('getJobExStages');
+    const result = await pool.request().query('getClientsShort');
     res.json(result.recordset);
   } catch (err) {
-    console.error('Error fetching jobs:', err);
+    console.error('Error fetching clients:', err);
     res.status(500).send('Internal Server Error');
   }
 });
