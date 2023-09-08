@@ -9,11 +9,7 @@ const config = {
   password: 'theApiUser',
   trustServerCertificate: true,
 };
-// const { jobId } = req.params;
-//     const pool = await sql.connect(config);
-//     const result = await pool
-//       .request()
-//       .input('jobId', sql.Int, jobId)
+
 router.get('/:jobId', async (req, res) => {
   try {
     const { jobId } = req.params;

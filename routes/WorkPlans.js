@@ -33,16 +33,7 @@ router.get('/:jobId', async (req, res) => {
     const result = await pool
       .request()
       .input('jobId', sql.Int, jobId)
-      .query(
-        'SELECT workPlan.id, workPlan.jobId, workPlan.stageId, jobExStages.theStage, workPlan.depttId, deptt.name AS theDeptt, CONVERT(VARCHAR(10), workPlan.schDtStart, 111) as dtStart , CONVERT(VARCHAR(10), workPlan.schDtEnd, 111) as dtEnd FROM  deptt INNER JOIN workPlan ON deptt.id = workPlan.depttId INNER JOIN jobExStages ON workPlan.stageId = jobExStages.id where jobId = @jobId'
-      );
-    //       SELECT
-    // 	A.id as stageId,
-    // 	A.theStage,
-    // 	depttId = isnull((select depttId from workPlan where (jobId = 21) and (stageId = A.id)),''),
-    // 	startDt = isnull((select schDtStart from workPlan where (jobId = 21) and (stageId = A.id)),''),
-    // 	endDt = isnull((select schDtEnd from workPlan where (jobId = 21) and (stageId = A.id)),'')
-    // FROM     jobExStages A
+      .execute('getJobWorkPlan');
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching job workPlan:', err);
