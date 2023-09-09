@@ -1,4 +1,5 @@
 // const config = require('config');
+const dotenv = require('dotenv');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const express = require('express');
@@ -18,47 +19,23 @@ const bookHeads = require('./routes/bookHeads');
 const bookDates = require('./routes/bookDates');
 const booking = require('./routes/booking');
 
+dotenv.config({ path: './config/config.env' });
+
 const cors = require('cors');
 const app = express();
 app.use(cors());
-
-// const logger = winston.createLogger({
-//   level: 'info',
-//   format: winston.format.json(),
-//   transports: [new winston.transports.Console()],
-// });
-// if (!config.get('jwtPrivateKey')) {
-//   console.error('FATAL ERROR: jwtPrivateKey not defined');
-//   process.exit(1);
-// }
-
-// console.log(`Environment info provided by Node: ${process.env.NODE_ENV}`);
-// console.log(`Environment info provided by Express: ${app.get('env')}`);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(helmet());
 
-// if (app.get('env') == 'development') app.use(morgan('tiny'));
-
-const port = process.env.PORT || 3000;
-
-// app.use(function (req, res, next) {
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header(
-//     'Access-Control-Allow-Headers',
-//     'Origin, X-Requested-With, Content-Type, Accept'
-//   );
-//   next();
-// });
-
-// Access-Control-Allow-Origin: http://localhost:3001
-// Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
-// Access-Control-Allow-Origin and Access-Control-Allow-Methods.
-
+const PORT = process.env.PORT || 5000;
 app.get('/', (req, res) => {
-  res.send('Hi');
+  // res.send('Hi from Express !');
+  //res.sendStatus(400);
+  //res.status(400).send('Error')
+  res.status(400).json({ err: true });
 });
 
 app.use('/api/emps', emps);
@@ -77,8 +54,8 @@ app.use('/api/bookHeads', bookHeads);
 app.use('/api/bookDates', bookDates);
 app.use('/api/booking', booking);
 
-// app.use('/api/WorkPlans/jobId', WorkPlans);
-
-app.listen(port, () =>
-  console.log(`the server started listening at port: ${port}`)
+app.listen(PORT, () =>
+  console.log(
+    `the server running in ${process.env.NODE_ENV} mode on port: ${PORT}`
+  )
 );
