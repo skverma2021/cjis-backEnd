@@ -1,12 +1,14 @@
 const sql = require('mssql');
 
-const config = {
-  server: 'VERMARNCDBG',
-  database: 'CJIS',
-  user: 'apiUserLogin',
-  password: 'theApiUser',
-  trustServerCertificate: true,
-};
+// const config = {
+//   server: 'VERMARNCDBG',
+//   database: 'CJIS',
+//   user: 'apiUserLogin',
+//   password: 'theApiUser',
+//   trustServerCertificate: true,
+// };
+
+const config = require('../db/mssqlDb');
 
 // @Desc:   fetch all Employees
 // @Route:  GET localhost:3000/api/emps/

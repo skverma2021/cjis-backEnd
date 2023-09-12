@@ -1,11 +1,13 @@
-const mssql = require('mssql');
+// const mssql = require('mssql');
+const dotenv = require('dotenv');
+dotenv.config({ path: '../config/config.env' });
 
-var con = mssql.createPool({
-  connectionLimit: 10,
-  host: 'localhost',
-  user: 'apiUser',
+const config = {
+  server: 'VERMARNCDBG',
+  database: 'CJIS',
+  user: 'apiUserLogin',
   password: 'theApiUser',
-  database: 'cjis',
-});
+  trustServerCertificate: true,
+};
 
-module.exports = con;
+module.exports = config;

@@ -1,7 +1,8 @@
-// const config = require('config');
 const dotenv = require('dotenv');
 const helmet = require('helmet');
-const morgan = require('morgan');
+// const logger = require('./middleware/logger');
+// const morgan = require('morgan');
+const colors = require('colors');
 const express = require('express');
 const emps = require('./routes/emps');
 const discipline = require('./routes/discipline');
@@ -23,6 +24,13 @@ dotenv.config({ path: './config/config.env' });
 
 const cors = require('cors');
 const app = express();
+
+// app.use(logger)
+// if (process.env.NODE_ENV.trim() === 'development'.trim()) {
+//   app.use(morgan('dev'));
+// }
+// app.use(logger);
+
 app.use(cors());
 
 app.use(express.json());
@@ -31,6 +39,7 @@ app.use(express.static('public'));
 app.use(helmet());
 
 const PORT = process.env.PORT || 5000;
+
 app.get('/', (req, res) => {
   // res.send('Hi from Express !');
   //res.sendStatus(400);
@@ -56,6 +65,7 @@ app.use('/api/booking', booking);
 
 app.listen(PORT, () =>
   console.log(
-    `the server running in ${process.env.NODE_ENV} mode on port: ${PORT}`
+    `the server running in ${process.env.NODE_ENV} mode on port: ${PORT}`.yellow
+      .bold
   )
 );
