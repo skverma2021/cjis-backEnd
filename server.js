@@ -1,7 +1,8 @@
-const dotenv = require('dotenv');
+const config = require('config');
+// const dotenv = require('dotenv');
 const helmet = require('helmet');
-// const logger = require('./middleware/logger');
-// const morgan = require('morgan');
+const logger = require('./middleware/logger');
+const morgan = require('morgan');
 const colors = require('colors');
 const express = require('express');
 const emps = require('./routes/emps');
@@ -20,15 +21,23 @@ const bookHeads = require('./routes/bookHeads');
 const bookDates = require('./routes/bookDates');
 const booking = require('./routes/booking');
 
-dotenv.config({ path: './config/config.env' });
+// dotenv.config({ path: './config/config.env' });
 
 const cors = require('cors');
+
+//PS C:\uproj-three\node> $env:cjisPass="theApiUser"
+
 const app = express();
 
-// app.use(logger)
-// if (process.env.NODE_ENV.trim() === 'development'.trim()) {
+app.use(logger);
+
+// if (process.env.NODE_ENV === 'development') {
 //   app.use(morgan('dev'));
 // }
+// or by using app.get('env)
+if (app.get('env') === 'development') {
+  app.use(morgan('dev'));
+}
 // app.use(logger);
 
 app.use(cors());
@@ -38,7 +47,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(helmet());
 
-const PORT = process.env.PORT || 5000;
+// const PORT = process.env.PORT || 5000;
+const PORT = config.get('thePort');
 
 app.get('/', (req, res) => {
   // res.send('Hi from Express !');
@@ -65,7 +75,8 @@ app.use('/api/booking', booking);
 
 app.listen(PORT, () =>
   console.log(
-    `the server running in ${process.env.NODE_ENV} mode on port: ${PORT}`.yellow
-      .bold
+    `[${config.get('thePass')}]the server running [${config.get(
+      'appName'
+    )}]  on port: ${PORT}`.yellow.bold
   )
 );

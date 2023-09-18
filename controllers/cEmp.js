@@ -1,4 +1,5 @@
 const sql = require('mssql');
+const bcrypt = require('bcrypt');
 
 // const config = {
 //   server: 'VERMARNCDBG',
@@ -7,6 +8,15 @@ const sql = require('mssql');
 //   password: 'theApiUser',
 //   trustServerCertificate: true,
 // };
+const isOK = async (clearPass, hashPass) => {
+  try {
+    // const hash = await bcrypt.hash(clearPass, 10);
+    const match = await bcrypt.compare(clearPass, hashPass);
+    return match;
+  } catch (error) {}
+
+  //   console.log(hash, match);
+};
 
 const config = require('../db/mssqlDb');
 
@@ -48,6 +58,7 @@ exports.addOneEmp = async (req, res, next) => {
       passwd,
     } = req.body;
 
+    const hashPass = await bcrypt.hash(passwd, 10);
     // Create a SQL Server connection pool
     const pool = await sql.connect(config);
 
@@ -65,7 +76,7 @@ exports.addOneEmp = async (req, res, next) => {
       .input('cityId', sql.Int, cityId)
       .input('mobile', sql.BigInt, mobile)
       .input('eMailId', sql.VarChar(150), eMailId)
-      .input('passwd', sql.VarChar(150), passwd)
+      .input('passwd', sql.VarChar(150), hashPass)
 
       .execute('postEmp');
 
@@ -103,6 +114,7 @@ exports.updateEmp = async (req, res, next) => {
       eMailId,
       passwd,
     } = req.body;
+    const hashPass = await bcrypt.hash(passwd, 10);
 
     // Create a SQL Server connection pool
     const pool = await sql.connect(config);
@@ -122,7 +134,7 @@ exports.updateEmp = async (req, res, next) => {
       .input('cityId', sql.Int, cityId)
       .input('mobile', sql.BigInt, mobile)
       .input('eMailId', sql.VarChar(150), eMailId)
-      .input('passwd', sql.VarChar(150), passwd)
+      .input('passwd', sql.VarChar(150), hashPass)
       .query(
         'UPDATE emp SET uId = @uId, fName = @fName, mName = @mName, sName = @sName, title = @title, dob = @dob, gender = @gender,addLine1 = @addLine1, cityId = @cityId, mobile = @mobile, eMailId = @eMailId,passwd = @passwd WHERE id = @id'
       );
@@ -178,6 +190,39 @@ exports.getOneEmp = async (req, res, next) => {
 // @Desc:   authenticate one Employee
 // @Route:  GET localhost:3000/api/emps/:theEMailId/:thePass
 // @Access: Public
+// exports.authEmp = async (req, res, next) => {
+//   try {
+//     const { theEMailId, thePass } = req.params;
+//     const pool = await sql.connect(config);
+//     const result = await pool
+//       .request()
+//       .input('theEMailId', sql.VarChar(150), theEMailId)
+//       .input('thePass', sql.VarChar(150), thePass)
+//       .query('SELECT passwd FROM emp where eMailId = @theEMailId');
+//     if (result.recordset.length == 0) {
+//       console.log('theResult', result.recordset);
+//       res.json([]);
+//     } else {
+//       console.log(result.recordset);
+//       const match = bcrypt.compare(
+//         result.recordset[0].passwd,
+//         toHash(result.recordset[0].passwd)
+//       );
+//       if (match) {
+//         res.json([{ found: true }]);
+//       } else {
+//         res.json([]);
+//       }
+//     }
+//     // res.json(result.recordset);
+//     // console.log(thePass);
+//   } catch (err) {
+//     console.error('Error fetching employees:', err);
+//     res.status(500).send('Internal Server Error');
+//   }
+// };
+
+// @save for now  [and passwd = @thePass]
 exports.authEmp = async (req, res, next) => {
   try {
     const { theEMailId, thePass } = req.params;
@@ -186,10 +231,20 @@ exports.authEmp = async (req, res, next) => {
       .request()
       .input('theEMailId', sql.VarChar(150), theEMailId)
       .input('thePass', sql.VarChar(150), thePass)
-      .query(
-        'SELECT * FROM emp where eMailId = @theEMailId and passwd = @thePass'
-      );
-    res.json(result.recordset);
+      .query('SELECT * FROM emp where eMailId = @theEMailId');
+
+    if (result.recordset.length == 0) {
+      res.json([]);
+      return;
+    }
+    const empFound = await isOK(thePass, result.recordset[0].passwd);
+    // console.log(await isOK(thePass, result.recordset[0].passwd));
+    // console.log(thePass, result.recordset[0].passwd);
+    if (empFound) {
+      res.json(result.recordset);
+    } else {
+      res.json([]);
+    }
   } catch (err) {
     console.error('Error fetching employees:', err);
     res.status(500).send('Internal Server Error');
