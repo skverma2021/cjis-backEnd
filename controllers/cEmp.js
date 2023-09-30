@@ -1,5 +1,7 @@
 const sql = require('mssql');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const configJwt = require('config');
 
 // const config = {
 //   server: 'VERMARNCDBG',
@@ -94,6 +96,15 @@ exports.addOneEmp = async (req, res, next) => {
 // @Route:  PUT localhost:3000/api/emps/:id
 // @Access: Private
 exports.updateEmp = async (req, res, next) => {
+  const token = req.header('Authorization');
+  if (!token) {
+    return res.status(401).json({ msg: 'No token provided' });
+  }
+  const tokenValue = token.replace('Bearer ', '');
+  const decoded = jwt.verify(tokenValue, configJwt.get('jwtPrivateKey'));
+  if (!decoded) {
+    return res.status(400).send('Invalid Token');
+  }
   try {
     // const { error } = validate(req.body);
     // if (error)
@@ -230,18 +241,33 @@ exports.authEmp = async (req, res, next) => {
     const result = await pool
       .request()
       .input('theEMailId', sql.VarChar(150), theEMailId)
-      .input('thePass', sql.VarChar(150), thePass)
-      .query('SELECT * FROM emp where eMailId = @theEMailId');
+      .input('thePass', sql.VarChar(150), thePass).query(`SELECT emp.id AS eID, 
+                    emp.empFullName AS eName, 
+                    emp.curDesig as eDesigID,
+                    designation.description AS eDesig, 
+                    grade.description AS eGrade, 
+                    emp.curDeptt as eDepttID,
+                    deptt.name AS eDeptt, 
+                    emp.passwd AS ePass
+              FROM     emp INNER JOIN
+                    deptt ON emp.curDeptt = deptt.id INNER JOIN
+                    grade INNER JOIN
+                    designation ON grade.id = designation.gradeId ON emp.curDesig = designation.id
+              WHERE  (emp.eMailId = @theEMailId)`);
 
     if (result.recordset.length == 0) {
       res.json([]);
       return;
     }
-    const empFound = await isOK(thePass, result.recordset[0].passwd);
+    const empFound = await isOK(thePass, result.recordset[0].ePass);
     // console.log(await isOK(thePass, result.recordset[0].passwd));
     // console.log(thePass, result.recordset[0].passwd);
     if (empFound) {
-      res.json(result.recordset);
+      const eRec = result.recordset[0];
+      delete eRec.ePass;
+      const token = jwt.sign(eRec, configJwt.get('jwtPrivateKey'));
+      res.json([{ msg: 'authenticated successfuly', token: token }]);
+      // res.json(result.recordset);
     } else {
       res.json([]);
     }

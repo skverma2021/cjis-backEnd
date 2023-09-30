@@ -141,7 +141,7 @@ router.put('/:id/:empDeptt', checkEmpDepttParameter, async (req, res) => {
     //   return res.status(400).send(`Invalid input: ${error.details[0].message}`);
     const { id } = req.params;
     const { empId, depttId, fromDt } = req.body;
-    console.log(empId, depttId, fromDt);
+    // console.log(empId, depttId, fromDt);
     // Create a SQL Server connection pool
     const pool = await sql.connect(config);
     await pool

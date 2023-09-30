@@ -10,8 +10,9 @@ const config = {
   password: 'theApiUser',
   trustServerCertificate: true,
 };
-
+// used in TransferPosting.jsx
 router.get('/:id', async (req, res) => {
+  // console.log('Hi from book.js');
   try {
     const { id } = req.params;
     const pool = await sql.connect(config);

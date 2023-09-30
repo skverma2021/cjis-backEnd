@@ -1,3 +1,4 @@
 {
-    "thePass": "cjisPass"
+    "thePass": "cjisPass",
+    "jwtPrivateKey": "cjisJwtPvtKey"
 }
