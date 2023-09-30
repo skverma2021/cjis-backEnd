@@ -2,14 +2,7 @@ const { validate } = require('../models/client');
 const express = require('express');
 const router = express.Router();
 const sql = require('mssql');
-
-const config = {
-  server: 'VERMARNCDBG',
-  database: 'CJIS',
-  user: 'apiUserLogin',
-  password: 'theApiUser',
-  trustServerCertificate: true,
-};
+const config = require('../db/mssqlDb');
 
 router.get('/', async (req, res) => {
   try {
@@ -65,9 +58,6 @@ router.post('/', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-// .query(
-//   'postClient @shortName, @longName, @website, @contactName, @contactEMail, @contactMobile, @addLine1, @street, @cityId'
-// );
 
 // POST route to insert city data
 router.put('/:id', async (req, res) => {

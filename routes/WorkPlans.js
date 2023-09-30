@@ -2,14 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const sql = require('mssql');
-
-const config = {
-  server: 'VERMARNCDBG',
-  database: 'CJIS',
-  user: 'apiUserLogin',
-  password: 'theApiUser',
-  trustServerCertificate: true,
-};
+const config = require('../db/mssqlDb');
 
 router.get('/', async (req, res) => {
   try {

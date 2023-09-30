@@ -2,14 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const sql = require('mssql');
-
-const config = {
-  server: 'VERMARNCDBG',
-  database: 'CJIS',
-  user: 'apiUserLogin',
-  password: 'theApiUser',
-  trustServerCertificate: true,
-};
+const config = require('../db/mssqlDb');
 
 router.get('/:empId/:dtId', async (req, res) => {
   try {
@@ -27,33 +20,6 @@ router.get('/:empId/:dtId', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
-// router.get('/:empId/:dtId', async (req, res) => {
-//   try {
-//     const { empId, dtId } = req.params;
-//     const pool = await sql.connect(config);
-//     const result = await pool
-//       .request()
-//       .input('empId', sql.Int, empId)
-//       .input('dtId', sql.BigInt, dtId).query(`
-//       SELECT A.id as theWpId,
-//         theBooking = isnull((select C.booking
-//                 from bookings C
-//                 where ((C.workPlanId = A.id) and (C.dateId = @dtId))), ''),
-//         toUpd = (select count(*)
-//           from bookings C
-//           where ((C.workPlanId = A.id) and (C.dateId = @dtId)))
-//       FROM     workPlan A INNER JOIN emp B ON A.depttId = B.curDeptt
-//       WHERE  (B.id = @empId)
-//       order by theWpId
-//       `);
-
-//     res.json(result.recordset);
-//   } catch (err) {
-//     console.error('Error fetching booking:', err);
-//     res.status(500).send('Internal Server Error');
-//   }
-// });
 
 // POST route to insert booking data
 router.post('/', async (req, res) => {

@@ -2,14 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const sql = require('mssql');
+const config = require('../db/mssqlDb');
 
-const config = {
-  server: 'VERMARNCDBG',
-  database: 'CJIS',
-  user: 'apiUserLogin',
-  password: 'theApiUser',
-  trustServerCertificate: true,
-};
 // used in TransferPosting.jsx
 router.get('/:id', async (req, res) => {
   // console.log('Hi from book.js');

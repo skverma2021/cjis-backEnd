@@ -2,14 +2,8 @@ const sql = require('mssql');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const configJwt = require('config');
+const config = require('../db/mssqlDb');
 
-// const config = {
-//   server: 'VERMARNCDBG',
-//   database: 'CJIS',
-//   user: 'apiUserLogin',
-//   password: 'theApiUser',
-//   trustServerCertificate: true,
-// };
 const isOK = async (clearPass, hashPass) => {
   try {
     // const hash = await bcrypt.hash(clearPass, 10);
@@ -19,8 +13,6 @@ const isOK = async (clearPass, hashPass) => {
 
   //   console.log(hash, match);
 };
-
-const config = require('../db/mssqlDb');
 
 // @Desc:   fetch all Employees
 // @Route:  GET localhost:3000/api/emps/
