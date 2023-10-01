@@ -11,7 +11,11 @@ const auth = (req, res, next) => {
   try {
     const decoded = jwt.verify(tokenValue, configJwt.get('jwtPrivateKey'));
     req.user = decoded;
-    console.log('Hi from middleware');
+    // console.log('Hi from middleware');
+    // console.log((Math.floor(Date.now()) - parseInt(decoded.iat) * 1000) / 1000);
+    req.elapsedTime = Math.floor(
+      (Math.floor(Date.now()) - parseInt(decoded.iat) * 1000) / 1000
+    );
     next();
   } catch (error) {
     return res.status(400).send('Invalid Token');

@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// POST route to insert city data
+// PUT route to insert city data
 router.put('/:id', async (req, res) => {
   try {
     const { error } = validate(req.body);
