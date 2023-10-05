@@ -8,7 +8,7 @@ const Joi = require('joi');
 
 function validateJob(job) {
   const schema = Joi.object({
-    description: Joi.string().min(3).max(50).required(),
+    description: Joi.string().min(3).max(100).required(),
     clientId: Joi.number().min(1).max(2000),
     ordDateStart: Joi.date().required(),
     ordDateEnd: Joi.date(),

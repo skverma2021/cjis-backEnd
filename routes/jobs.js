@@ -105,12 +105,14 @@ router.get('/:id', async (req, res) => {
     const result = await pool
       .request()
       .input('id', sql.Int, id)
-      .query('SELECT * FROM job where id = @id');
+      .query(
+        'SELECT id, description, clientId, CONVERT(VARCHAR(10), ordDateStart, 121) as ordDateStart ,  CONVERT(VARCHAR(10), ordDateEnd, 121) as ordDateEnd, ordValue FROM     job where id = @id'
+      );
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching Job:', err);
     res.status(500).send('Internal Server Error');
   }
 });
-
+// SELECT id, description, clientId, CONVERT(VARCHAR(10), ordDateStart, 111) as ordDateStart ,  CONVERT(VARCHAR(10), ordDateEnd, 111) as ordDateEnd, ordValue FROM     job where id = @id
 module.exports = router;

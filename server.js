@@ -13,6 +13,8 @@ const cities = require('./routes/cities');
 const clients = require('./routes/clients');
 const clientsShort = require('./routes/clientsShort');
 const jobs = require('./routes/jobs');
+const jobClient = require('./routes/jobClient');
+
 const ExStages = require('./routes/ExStages');
 const WorkPlans = require('./routes/WorkPlans');
 const empBookHead = require('./routes/book');
@@ -55,6 +57,8 @@ app.use('/api/cities', cities);
 app.use('/api/clients', clients);
 app.use('/api/clientsShort', clientsShort);
 app.use('/api/jobs', jobs);
+app.use('/api/jobClient', jobClient);
+
 app.use('/api/ExStages', ExStages);
 app.use('/api/WorkPlans', WorkPlans);
 app.use('/api/empBookHead', empBookHead);
