@@ -58,7 +58,8 @@ router.post('/', async (req, res) => {
     // if (error)
     //   return res.status(400).send(`Invalid input: ${error.details[0].message}`);
 
-    const { jobId, stageId, depttId, schDtStart, schDtEnd } = req.body;
+    const { jobId, stageId, depttId, schDtStart, schDtEnd, shareVal } =
+      req.body;
 
     // Create a SQL Server connection pool
     const pool = await sql.connect(config);
@@ -71,8 +72,9 @@ router.post('/', async (req, res) => {
       .input('depttId', sql.TinyInt, depttId)
       .input('schDtStart', sql.Date, schDtStart)
       .input('schDtEnd', sql.Date, schDtEnd)
+      .input('shareVal', sql.Money, shareVal)
       .query(
-        'INSERT INTO workPlan (jobId, stageId, depttId, schDtStart, schDtEnd) VALUES (@jobId, @stageId, @depttId, @schDtStart, @schDtEnd)'
+        'INSERT INTO workPlan (jobId, stageId, depttId, schDtStart, schDtEnd, shareVal) VALUES (@jobId, @stageId, @depttId, @schDtStart, @schDtEnd, @shareVal)'
       );
 
     // res;
@@ -91,7 +93,7 @@ router.put('/:jobId/:stageId', async (req, res) => {
     // if (error)
     //   return res.status(400).send(`Invalid input: ${error.details[0].message}`);
     const { jobId, stageId } = req.params;
-    const { depttId, schDtStart, schDtEnd } = req.body;
+    const { depttId, schDtStart, schDtEnd, shareVal } = req.body;
 
     // Create a SQL Server connection pool
     const pool = await sql.connect(config);
@@ -104,8 +106,9 @@ router.put('/:jobId/:stageId', async (req, res) => {
       .input('depttId', sql.TinyInt, depttId)
       .input('schDtStart', sql.Date, schDtStart)
       .input('schDtEnd', sql.Date, schDtEnd)
+      .input('shareVal', sql.Money, shareVal)
       .query(
-        'UPDATE workPlan  set depttId = @depttId, schDtStart = @schDtStart, schDtEnd = @schDtEnd where (jobId = @jobId) AND (stageId = @stageId)'
+        'UPDATE workPlan  set depttId = @depttId, schDtStart = @schDtStart, schDtEnd = @schDtEnd, shareVal = @shareVal  where (jobId = @jobId) AND (stageId = @stageId)'
       );
 
     // res;
