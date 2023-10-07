@@ -4,15 +4,17 @@ const router = express.Router();
 const sql = require('mssql');
 const config = require('../db/mssqlDb');
 
-router.get('/:empId/:dtId', async (req, res) => {
+router.get('/:empId/:dtId/:m/:y', async (req, res) => {
   try {
-    const { empId, dtId } = req.params;
+    const { empId, dtId, m, y } = req.params;
     const pool = await sql.connect(config);
     const result = await pool
       .request()
       .input('empId', sql.Int, empId)
       .input('dtId', sql.BigInt, dtId)
-      .execute('getBookings');
+      .input('m', sql.Int, m)
+      .input('y', sql.Int, y)
+      .execute('getBookingsNew');
 
     res.json(result.recordset);
   } catch (err) {
@@ -20,6 +22,24 @@ router.get('/:empId/:dtId', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+// Save for now
+// router.get('/:empId/:dtId', async (req, res) => {
+//   try {
+//     const { empId, dtId } = req.params;
+//     const pool = await sql.connect(config);
+//     const result = await pool
+//       .request()
+//       .input('empId', sql.Int, empId)
+//       .input('dtId', sql.BigInt, dtId)
+//       .execute('getBookings');
+
+//     res.json(result.recordset);
+//   } catch (err) {
+//     console.error('Error fetching booking:', err);
+//     res.status(500).send('Internal Server Error');
+//   }
+// });
 
 // POST route to insert booking data
 router.post('/', async (req, res) => {
