@@ -14,7 +14,7 @@ router.get('/:empId/:dtId/:m/:y', async (req, res) => {
       .input('dtId', sql.BigInt, dtId)
       .input('m', sql.Int, m)
       .input('y', sql.Int, y)
-      .execute('getBookingsNew');
+      .execute('getBookingsNew2');
 
     res.json(result.recordset);
   } catch (err) {
