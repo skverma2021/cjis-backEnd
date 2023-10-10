@@ -50,6 +50,7 @@ router.post('/', async (req, res) => {
 
     const { empId, workPlanId, dateId, booking } = req.body;
 
+    // console.log('POST:', empId, workPlanId, dateId, booking);
     // Create a SQL Server connection pool
     const pool = await sql.connect(config);
 
@@ -80,6 +81,7 @@ router.put('/', async (req, res) => {
 
     const { empId, workPlanId, dateId, booking } = req.body;
 
+    console.log('PUT:', empId, workPlanId, dateId, booking);
     // Create a SQL Server connection pool
     const pool = await sql.connect(config);
 
