@@ -6,6 +6,7 @@ const colors = require('colors');
 const express = require('express');
 
 const emps = require('./routes/emps');
+const cp = require('./routes/cp');
 const discipline = require('./routes/discipline');
 const designation = require('./routes/designation');
 const department = require('./routes/department');
@@ -49,6 +50,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/emps', emps);
+app.use('/api/cp', cp);
 app.use('/api/discipline', discipline);
 app.use('/api/designation', designation);
 app.use('/api/designation/short', designation);
