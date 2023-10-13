@@ -48,7 +48,7 @@ router.post('/', async (req, res) => {
     // if (error)
     //   return res.status(400).send(`Invalid input: ${error.details[0].message}`);
 
-    const { empId, workPlanId, dateId, booking } = req.body;
+    const { empId, workPlanId, dateId, booking, bookingVal } = req.body;
 
     // console.log('POST:', empId, workPlanId, dateId, booking);
     // Create a SQL Server connection pool
@@ -61,6 +61,7 @@ router.post('/', async (req, res) => {
       .input('workPlanId', sql.Int, workPlanId)
       .input('dateId', sql.BigInt, dateId)
       .input('booking', sql.Float, booking)
+      .input('bookingVal', sql.Money, bookingVal)
       .execute('postBookings');
 
     // res;
@@ -79,7 +80,7 @@ router.put('/', async (req, res) => {
     // if (error)
     //   return res.status(400).send(`Invalid input: ${error.details[0].message}`);
 
-    const { empId, workPlanId, dateId, booking } = req.body;
+    const { empId, workPlanId, dateId, booking, bookingVal } = req.body;
 
     console.log('PUT:', empId, workPlanId, dateId, booking);
     // Create a SQL Server connection pool
@@ -92,6 +93,7 @@ router.put('/', async (req, res) => {
       .input('workPlanId', sql.Int, workPlanId)
       .input('dateId', sql.BigInt, dateId)
       .input('booking', sql.Float, booking)
+      .input('bookingVal', sql.Money, bookingVal)
       .execute('putBookings');
 
     res;
