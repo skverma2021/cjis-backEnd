@@ -14,6 +14,36 @@ router.get('/', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+router.get('/summYM', async (req, res) => {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request().execute('xYearMonthBooked');
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error fetching year-month summary:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+router.get('/summYDM', async (req, res) => {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request().execute('xYearDepttMonthBooked');
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error fetching year-department-month summary:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+router.get('/summYDMC', async (req, res) => {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request().execute('xYearDepttMonthClientBooked');
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error fetching year-department-month-client summary:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 // POST route to insert employee data
 router.post('/', async (req, res) => {

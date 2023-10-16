@@ -28,6 +28,27 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/summDG', async (req, res) => {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request().execute('xTabDepttGradeEmpCount');
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error fetching summary:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+router.get('/summDA', async (req, res) => {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request().execute('xTabdepttEmpAgeGroup');
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error fetching summary:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 router.post('/', async (req, res) => {
   try {
     const {
