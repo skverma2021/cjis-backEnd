@@ -44,6 +44,19 @@ router.get('/summYDMC', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+router.get('/summYDMA', async (req, res) => {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request().execute('tabShareVal1');
+    res.json(result.recordset);
+  } catch (err) {
+    console.error(
+      'Error fetching year-department-month-Allottment summary:',
+      err
+    );
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 // POST route to insert employee data
 router.post('/', async (req, res) => {
@@ -141,6 +154,23 @@ router.get('/:id', async (req, res) => {
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching Job:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+//save for now
+router.get('/client/:jobId', async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const pool = await sql.connect(config);
+    const result = await pool.request().input('jobId', sql.Int, jobId)
+      .query(`SELECT job.description AS jobDes, client.shortName AS jobClient, CONVERT(VARCHAR(10), job.ordDateStart, 121) AS jobStart, CONVERT(VARCHAR(10), job.ordDateEnd, 121) AS jobEnd, job.ordValue AS jobValue
+      FROM     client INNER JOIN
+                        job ON client.id = job.clientId
+      WHERE  (job.id = @jobId)`);
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error fetching jobs:', err);
     res.status(500).send('Internal Server Error');
   }
 });

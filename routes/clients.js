@@ -15,6 +15,19 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/short', async (req, res) => {
+  // console.log('here in short');
+  try {
+    const { mode } = req.params;
+    const pool = await sql.connect(config);
+    const result = await pool.request().query('getClientsShort');
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error fetching clients:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 // POST route to insert city data
 router.post('/', async (req, res) => {
   try {

@@ -6,24 +6,15 @@ const colors = require('colors');
 const express = require('express');
 
 const emps = require('./routes/emps');
-const cp = require('./routes/cp');
 const discipline = require('./routes/discipline');
 const designation = require('./routes/designation');
 const department = require('./routes/department');
 const cities = require('./routes/cities');
 const clients = require('./routes/clients');
-const clientsShort = require('./routes/clientsShort');
 const jobs = require('./routes/jobs');
-// const jobs = require('./routes/jobs/summYM');
-// const jobs = require('./routes/jobs/summYDM');
-// const jobs = require('./routes/jobs/YDMC');
-const jobClient = require('./routes/jobClient');
 
 const ExStages = require('./routes/ExStages');
 const WorkPlans = require('./routes/WorkPlans');
-const empBookHead = require('./routes/book');
-const bookHeads = require('./routes/bookHeads');
-const bookDates = require('./routes/bookDates');
 const booking = require('./routes/booking');
 
 const cors = require('cors');
@@ -53,25 +44,16 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/emps', emps);
-app.use('/api/cp', cp);
 app.use('/api/discipline', discipline);
 app.use('/api/designation', designation);
 app.use('/api/designation/short', designation);
 app.use('/api/department', department);
 app.use('/api/cities', cities);
 app.use('/api/clients', clients);
-app.use('/api/clientsShort', clientsShort);
 app.use('/api/jobs', jobs);
-// app.use('/api/jobs/summYM', jobs);
-// app.use('/api/jobs/summYDM', jobs);
-// app.use('/api/jobs/summYDMC', jobs);
-app.use('/api/jobClient', jobClient);
 
 app.use('/api/ExStages', ExStages);
 app.use('/api/WorkPlans', WorkPlans);
-app.use('/api/empBookHead', empBookHead);
-app.use('/api/bookHeads', bookHeads);
-app.use('/api/bookDates', bookDates);
 app.use('/api/booking', booking);
 
 app.listen(PORT, () =>
