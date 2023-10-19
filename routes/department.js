@@ -6,9 +6,7 @@ const config = require('../db/mssqlDb');
 router.get('/', async (req, res) => {
   try {
     const pool = await sql.connect(config);
-    const result = await pool
-      .request()
-      .query('SELECT id,name, location FROM deptt order by id');
+    const result = await pool.request().execute('getDepartments');
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching department:', err);
@@ -20,11 +18,7 @@ router.get('/short', async (req, res) => {
   // const { mode } = req.params;
   try {
     const pool = await sql.connect(config);
-    const result = await pool
-      .request()
-      .query(
-        `SELECT id as depttId, name as depttName FROM deptt ORDER BY name`
-      );
+    const result = await pool.request().execute(`getDepartmentsShort`);
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching departments:', err);
@@ -52,13 +46,7 @@ router.get('/empdeptt/:empId', async (req, res) => {
       .request()
       .input('empId', sql.Int, empId)
       // .input('trail', sql.VarChar(5), trail)
-      .query(
-        `SELECT empDeptt.id AS theId,empDeptt.empId AS theEmpId,empDeptt.depttId AS theDepttId, deptt.name AS theDeptt, CONVERT(VARCHAR(10), empDeptt.fromDt, 121) AS theFromDt
-        FROM     empDeptt INNER JOIN
-                          deptt ON empDeptt.depttId = deptt.id
-        WHERE  (empDeptt.empId = @empId)
-        ORDER BY theFromDt DESC`
-      );
+      .execute(`getEmpDepttTrail`);
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching employee transfers:', err);
@@ -82,9 +70,7 @@ router.post('/empdeptt', async (req, res) => {
       .input('empId', sql.Int, empId)
       .input('depttId', sql.Int, depttId)
       .input('fromDt', sql.Date, fromDt)
-      .query(
-        'INSERT INTO empDeptt (empId, depttId, fromDt) VALUES (@empId, @depttId, @fromDt)'
-      );
+      .execute('postEmpDeptt');
 
     // res;
     res
@@ -143,9 +129,7 @@ router.put('/empdeptt/:id', async (req, res) => {
       .input('empId', sql.Int, empId)
       .input('depttId', sql.Int, depttId)
       .input('fromDt', sql.Date, fromDt)
-      .query(
-        'UPDATE empDeptt SET empId = @empId, depttId = @depttId, fromDt = @fromDt WHERE id = @id'
-      );
+      .execute('putEmpDeptt');
 
     res
       .status(201)

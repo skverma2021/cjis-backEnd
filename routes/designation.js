@@ -6,11 +6,7 @@ const config = require('../db/mssqlDb');
 router.get('/', async (req, res) => {
   try {
     const pool = await sql.connect(config);
-    const result = await pool
-      .request()
-      .query(
-        'SELECT id,description,theDiscp,theHourlyRate,theGrade FROM designation order by theDiscp, theGrade'
-      );
+    const result = await pool.request().execute('getDesignations');
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching designations:', err);
@@ -22,11 +18,7 @@ router.get('/:short', async (req, res) => {
   const { mode } = req.params;
   try {
     const pool = await sql.connect(config);
-    const result = await pool
-      .request()
-      .query(
-        `SELECT designation.id as theDesigId, concat('[',designation.description,'] ', '[',discipline.description,'] ' ,'[', grade.description ,'] ','[', grade.hourlyRate,']') as theDescription FROM designation INNER JOIN discipline ON designation.discpId = discipline.id INNER JOIN grade ON designation.gradeId = grade.id order by discipline.description,grade.description`
-      );
+    const result = await pool.request().execute(`getDesignationsShort`);
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching designations:', err);
@@ -54,15 +46,7 @@ router.get('/trail/:empId', async (req, res) => {
       .request()
       .input('empId', sql.Int, empId)
       // .input('trail', sql.VarChar(5), trail)
-      .query(
-        `SELECT empDesig.id AS theId,designation.id as theDesigId,empDesig.empId AS theEmpId, discipline.description AS theDiscp, grade.description AS theGrade, grade.hourlyRate AS theHourlyRate, designation.description AS theDesig, CONVERT(VARCHAR(10), empDesig.fromDt, 121) as theFromDt
-        FROM     empDesig INNER JOIN
-                          designation ON empDesig.desigId = designation.id INNER JOIN
-                          discipline ON designation.discpId = discipline.id INNER JOIN
-                          grade ON designation.gradeId = grade.id
-        WHERE  (empDesig.empId = @empId)
-        ORDER BY theFromDt DESC`
-      );
+      .execute(`getEmpDesigTrail`);
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching employee designations:', err);
@@ -88,9 +72,7 @@ router.post('/empdesig', async (req, res) => {
       .input('empId', sql.Int, empId)
       .input('desigId', sql.Int, desigId)
       .input('fromDt', sql.Date, fromDt)
-      .query(
-        'INSERT INTO empDesig (empId, desigId, fromDt) VALUES (@empId, @desigId, @fromDt)'
-      );
+      .execute('postEmpDesig');
 
     // res;
     res
@@ -150,9 +132,7 @@ router.put('/empDesig/:id', async (req, res) => {
       .input('empId', sql.Int, empId)
       .input('desigId', sql.Int, desigId)
       .input('fromDt', sql.Date, fromDt)
-      .query(
-        'UPDATE empDesig SET empId = @empId, desigId = @desigId, fromDt = @fromDt WHERE id = @id'
-      );
+      .execute('putEmpDesig');
 
     res
       .status(201)
