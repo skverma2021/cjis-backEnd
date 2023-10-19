@@ -12,8 +12,6 @@ const department = require('./routes/department');
 const cities = require('./routes/cities');
 const clients = require('./routes/clients');
 const jobs = require('./routes/jobs');
-
-const ExStages = require('./routes/ExStages');
 const WorkPlans = require('./routes/WorkPlans');
 const booking = require('./routes/booking');
 
@@ -51,8 +49,6 @@ app.use('/api/department', department);
 app.use('/api/cities', cities);
 app.use('/api/clients', clients);
 app.use('/api/jobs', jobs);
-
-app.use('/api/ExStages', ExStages);
 app.use('/api/WorkPlans', WorkPlans);
 app.use('/api/booking', booking);
 

@@ -73,9 +73,7 @@ router.post('/', async (req, res) => {
       .input('schDtStart', sql.Date, schDtStart)
       .input('schDtEnd', sql.Date, schDtEnd)
       .input('shareVal', sql.Money, shareVal)
-      .query(
-        'INSERT INTO workPlan (jobId, stageId, depttId, schDtStart, schDtEnd, shareVal) VALUES (@jobId, @stageId, @depttId, @schDtStart, @schDtEnd, @shareVal)'
-      );
+      .execute('postWorkPlan');
 
     // res;
     res
@@ -107,9 +105,7 @@ router.put('/:jobId/:stageId', async (req, res) => {
       .input('schDtStart', sql.Date, schDtStart)
       .input('schDtEnd', sql.Date, schDtEnd)
       .input('shareVal', sql.Money, shareVal)
-      .query(
-        'UPDATE workPlan  set depttId = @depttId, schDtStart = @schDtStart, schDtEnd = @schDtEnd, shareVal = @shareVal  where (jobId = @jobId) AND (stageId = @stageId)'
-      );
+      .execute('putWorkPlan');
 
     // res;
     res
