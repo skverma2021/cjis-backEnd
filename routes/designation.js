@@ -45,17 +45,17 @@ const checkTrailParameter = (req, res, next) => {
   next(); // Proceed to the route handler if the 'trail' value is correct
 };
 
-router.get('/:empId/:trail', checkTrailParameter, async (req, res) => {
-  const { empId, trail } = req.params;
+router.get('/trail/:empId', async (req, res) => {
+  const { empId } = req.params;
   // if (trail !== 'trail') empId = 1;
   try {
     const pool = await sql.connect(config);
     const result = await pool
       .request()
       .input('empId', sql.Int, empId)
-      .input('trail', sql.VarChar(5), trail)
+      // .input('trail', sql.VarChar(5), trail)
       .query(
-        `SELECT empDesig.id AS theId,designation.id as theDesigId,empDesig.empId AS theEmpId, discipline.description AS theDiscp, grade.description AS theGrade, grade.hourlyRate AS theHourlyRate, designation.description AS theDesig, CONVERT(VARCHAR(10), empDesig.fromDt, 111) as theFromDt
+        `SELECT empDesig.id AS theId,designation.id as theDesigId,empDesig.empId AS theEmpId, discipline.description AS theDiscp, grade.description AS theGrade, grade.hourlyRate AS theHourlyRate, designation.description AS theDesig, CONVERT(VARCHAR(10), empDesig.fromDt, 121) as theFromDt
         FROM     empDesig INNER JOIN
                           designation ON empDesig.desigId = designation.id INNER JOIN
                           discipline ON designation.discpId = discipline.id INNER JOIN
@@ -71,7 +71,7 @@ router.get('/:empId/:trail', checkTrailParameter, async (req, res) => {
 });
 
 // POST route to insert employee data
-router.post('/:posting', async (req, res) => {
+router.post('/empdesig', async (req, res) => {
   try {
     // const { error } = validate(req.body);
     // if (error)
@@ -112,7 +112,7 @@ const checkEmpDesigParameter = (req, res, next) => {
 
   next(); // Proceed to the route handler if the 'trail' value is correct
 };
-router.delete('/:id/:empDesig', checkEmpDesigParameter, async (req, res) => {
+router.delete('/empDesig/:id', async (req, res) => {
   // console.log('Hi');
   try {
     const { id } = req.params;
@@ -134,14 +134,14 @@ router.delete('/:id/:empDesig', checkEmpDesigParameter, async (req, res) => {
 });
 
 // update empDesig
-router.put('/:id/:empDesig', checkEmpDesigParameter, async (req, res) => {
+router.put('/empDesig/:id', async (req, res) => {
   try {
     // const { error } = validate(req.body);
     // if (error)
     //   return res.status(400).send(`Invalid input: ${error.details[0].message}`);
     const { id } = req.params;
     const { empId, desigId, fromDt } = req.body;
-    console.log(empId, desigId, fromDt);
+    // console.log(empId, desigId, fromDt);
     // Create a SQL Server connection pool
     const pool = await sql.connect(config);
     await pool

@@ -16,8 +16,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:short', async (req, res) => {
-  const { mode } = req.params;
+router.get('/short', async (req, res) => {
+  // const { mode } = req.params;
   try {
     const pool = await sql.connect(config);
     const result = await pool
@@ -43,17 +43,17 @@ const checkTrailParameter = (req, res, next) => {
   next(); // Proceed to the route handler if the 'trail' value is correct
 };
 
-router.get('/:empId/:trail', checkTrailParameter, async (req, res) => {
-  const { empId, trail } = req.params;
+router.get('/empdeptt/:empId', async (req, res) => {
+  const { empId } = req.params;
   // if (trail !== 'trail') empId = 1;
   try {
     const pool = await sql.connect(config);
     const result = await pool
       .request()
       .input('empId', sql.Int, empId)
-      .input('trail', sql.VarChar(5), trail)
+      // .input('trail', sql.VarChar(5), trail)
       .query(
-        `SELECT empDeptt.id AS theId,empDeptt.empId AS theEmpId,empDeptt.depttId AS theDepttId, deptt.name AS theDeptt, CONVERT(VARCHAR(10), empDeptt.fromDt, 111) AS theFromDt
+        `SELECT empDeptt.id AS theId,empDeptt.empId AS theEmpId,empDeptt.depttId AS theDepttId, deptt.name AS theDeptt, CONVERT(VARCHAR(10), empDeptt.fromDt, 121) AS theFromDt
         FROM     empDeptt INNER JOIN
                           deptt ON empDeptt.depttId = deptt.id
         WHERE  (empDeptt.empId = @empId)
@@ -65,7 +65,7 @@ router.get('/:empId/:trail', checkTrailParameter, async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-router.post('/:transfer', async (req, res) => {
+router.post('/empdeptt', async (req, res) => {
   try {
     // const { error } = validate(req.body);
     // if (error)
@@ -106,7 +106,7 @@ const checkEmpDepttParameter = (req, res, next) => {
 
   next(); // Proceed to the route handler if the 'trail' value is correct
 };
-router.delete('/:id/:empDeptt', checkEmpDepttParameter, async (req, res) => {
+router.delete('/empdeptt/:id', async (req, res) => {
   // console.log('Hi');
   try {
     const { id } = req.params;
@@ -127,7 +127,7 @@ router.delete('/:id/:empDeptt', checkEmpDepttParameter, async (req, res) => {
   }
 });
 
-router.put('/:id/:empDeptt', checkEmpDepttParameter, async (req, res) => {
+router.put('/empdeptt/:id', async (req, res) => {
   try {
     // const { error } = validate(req.body);
     // if (error)
