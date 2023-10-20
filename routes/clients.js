@@ -20,7 +20,7 @@ router.get('/short', async (req, res) => {
   try {
     const { mode } = req.params;
     const pool = await sql.connect(config);
-    const result = await pool.request().query('getClientsShort');
+    const result = await pool.request().execute('getClientsShort');
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching clients:', err);

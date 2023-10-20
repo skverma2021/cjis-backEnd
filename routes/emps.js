@@ -20,7 +20,7 @@ const isOK = async (clearPass, hashPass) => {
 router.get('/', async (req, res) => {
   try {
     const pool = await sql.connect(config);
-    const result = await pool.request().query('getEmps');
+    const result = await pool.request().execute('getEmps');
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching employees:', err);
@@ -150,9 +150,7 @@ router.put('/:id', auth, async (req, res) => {
       .input('mobile', sql.BigInt, mobile)
       .input('eMailId', sql.VarChar(150), eMailId)
       .input('passwd', sql.VarChar(150), hashPass)
-      .query(
-        'UPDATE emp SET uId = @uId, fName = @fName, mName = @mName, sName = @sName, title = @title, dob = @dob, gender = @gender,addLine1 = @addLine1, cityId = @cityId, mobile = @mobile, eMailId = @eMailId,passwd = @passwd WHERE id = @id'
-      );
+      .execute('putEmp');
 
     res.send(`Employee data updated successfully ${JSON.stringify(req.body)}`);
   } catch (err) {
@@ -222,43 +220,17 @@ router.get('/:theEMailId/:thePass', async (req, res) => {
     const result = await pool
       .request()
       .input('theEMailId', sql.VarChar(150), theEMailId)
-      .input('thePass', sql.VarChar(150), thePass).query(`SELECT emp.id AS eID, 
-                    emp.empFullName AS eName, 
-                    emp.curDesig as eDesigID,
-                    designation.description AS eDesig, 
-                    grade.description AS eGrade, 
-                    emp.curDeptt as eDepttID,
-                    deptt.name AS eDeptt, 
-                    emp.passwd AS ePass
-              FROM     emp INNER JOIN
-                    deptt ON emp.curDeptt = deptt.id INNER JOIN
-                    grade INNER JOIN
-                    designation ON grade.id = designation.gradeId ON emp.curDesig = designation.id
-              WHERE  (emp.eMailId = @theEMailId)`);
-
+      .execute(`getEmpEmail`);
     if (result.recordset.length == 0) {
       res.json([]);
       return;
     }
     const empFound = await isOK(thePass, result.recordset[0].ePass);
-    // console.log(await isOK(thePass, result.recordset[0].passwd));
-    // console.log(thePass, result.recordset[0].passwd);
     if (empFound) {
       const eRec = result.recordset[0];
       delete eRec.ePass;
-      // new
-      // const payload = {
-      //   sub: eRec,
-      //   iat: Math.floor(Date.now() / 1000),
-      //   exp: Math.floor(Date.now() / 1000) + 60,
-      // };
-
-      // old
       const token = jwt.sign(eRec, configJwt.get('jwtPrivateKey'));
-      // const token = jwt.sign(payload, configJwt.get('jwtPrivateKey'));
-
       res.json([{ msg: 'authenticated successfuly', token: token }]);
-      // res.json(result.recordset);
     } else {
       res.json([]);
     }
